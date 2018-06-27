@@ -8,7 +8,8 @@ class App extends Component {
   state = {
     wordToDiscover: this.generateWord(),
     guesses: 0,
-    usedLetters: new Set([])
+    usedLetters: new Set([]),
+    finished: false
   }
 
   generateWord() {
@@ -24,23 +25,63 @@ class App extends Component {
     )
   }
 
+  // Arrow fx for binding
+  handleLetterClick = (event) => {
+    const letter = event.currentTarget.innerHTML;
+    const { wordToDiscover, guesses, usedLetters } = this.state;
+
+    const newGuesses = guesses + 1;
+    this.setState( { guesses: newGuesses });
+
+    if(!usedLetters.has(letter)) {
+      const newUsedLetters = usedLetters.add(letter);
+      this.setState( { usedLetters: newUsedLetters });
+    }
+
+    const wordToDisplay = this.computeDisplay(wordToDiscover, usedLetters);
+    if(wordToDisplay.indexOf('_') === -1) {
+      this.setState( { finished: true });
+    }
+  }
+
+  // Arrow fx for binding
+  newGame = () => {
+    this.setState({
+      wordToDiscover: this.generateWord(),
+      guesses: 0,
+      usedLetters: new Set([]),
+      finished: false
+    });
+  }
+
   render() {
-    const { wordToDiscover, guesses, usedLetters } = this.state
+    const { wordToDiscover, guesses, usedLetters, finished } = this.state
     return (
       <div className="pendu">
         <div className="guesses">
-          { guesses }
+          Coups : { guesses }
         </div>
         <div className="wordToDiscover">
           { this.computeDisplay(wordToDiscover, usedLetters) }
         </div>
-        <div className="letters">
+        {!finished ? (
+          <div className="letters">
           {LETTERS.map((letter, index) => (
-            () => (
-              <span>Hey </span>
-            )
+            <span
+              key={index}
+              className='letter'
+              onClick={this.handleLetterClick}>
+              {letter}
+            </span>
           ))}
         </div>
+        ) : (
+          <button
+            className="newGame"
+            onClick={this.newGame}>
+            Nouvelle partie
+          </button>
+        ) }
       </div>
     );
   }
