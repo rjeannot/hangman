@@ -28,6 +28,7 @@ class App extends Component {
   // Arrow fx for binding
   handleLetterClick = (event) => {
     const letter = event.currentTarget.innerHTML;
+    event.currentTarget.style.backgroundColor = 'gray';
     const { wordToDiscover, guesses, usedLetters } = this.state;
 
     const newGuesses = guesses + 1;
